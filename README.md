@@ -1,8 +1,9 @@
 # Twitter for Node.js
 
-An asynchronous client library for the Twitter [REST](https://dev.twitter.com/rest/public) and [Streaming](https://dev.twitter.com/streaming/overview) API's.
+A Promise-oriented asynchronous client library for the Twitter [REST](https://dev.twitter.com/rest/public) and [Streaming](https://dev.twitter.com/streaming/overview) API's.  
+This is developed based on [node-twitter](https://github.com/desmondmorris/node-twitter), however, is __NOT COMPATIBLE__ with the original library.
 
-[![wercker status](https://app.wercker.com/status/624dbe8ad011852d1e01d7dc03941fc5/s/master "wercker status")](https://app.wercker.com/project/bykey/624dbe8ad011852d1e01d7dc03941fc5) [![NPM](https://nodei.co/npm/twitter.png?mini=true)](https://nodei.co/npm/twitter/)
+Both of the REST methods are redesigned to be Thenable and can be chained with methods `then`.
 
 ```javascript
 var Twitter = require('twitter');
@@ -15,16 +16,14 @@ var client = new Twitter({
 });
 
 var params = {screen_name: 'nodejs'};
-client.get('statuses/user_timeline', params, function(error, tweets, response){
-  if (!error) {
-    console.log(tweets);
-  }
+client.get('statuses/user_timeline', params).then(function(tweets, response) {
+  console.log(tweets);
+}, function(err, response) {
+  console.log(err);
+}).then(function() {
+  console.log('Done.');
 });
 ```
-
-## Installation
-
-`npm install twitter`
 
 ## Quick Start
 
@@ -55,8 +54,8 @@ var client = new Twitter({
 You now have the ability to make GET and POST requests against the API via the convenience methods.
 
 ```javascript
-client.get(path, params, callback);
-client.post(path, params, callback);
+client.get(path, params).then(resolveCallback, rejectCallback);
+client.post(path, params).then(resolveCallback, rejectCallback);
 client.stream(path, params, callback);
 ```
 
@@ -67,20 +66,22 @@ You simply need to pass the endpoint and parameters to one of convenience method
 Example, lets get a [list of favorites](https://dev.twitter.com/rest/reference/get/favorites/list):
 
 ```javascript
-client.get('favorites/list', function(error, tweets, response){
-  if(error) throw error;
+client.get('favorites/list').then(function(tweets, response) {
   console.log(tweets);  // The favorites.
   console.log(response);  // Raw response object.
+}, function(error, response) {
+  throw error;
 });
 ```
 
 How about an example that passes parameters?  Let's  [tweet something](https://dev.twitter.com/rest/reference/post/statuses/update):
 
 ```javascript
-client.post('statuses/update', {status: 'I Love Twitter'},  function(error, tweet, response){
-  if(error) throw error;
+client.post('statuses/update', {status: 'I Love Twitter'}).then(function(tweet, response) {
   console.log(tweet);  // Tweet body.
   console.log(response);  // Raw response object.
+}, function(error, response) {
+  throw error;
 });
 ```
 
@@ -110,6 +111,7 @@ client.stream('statuses/filter', {track: 'javascript'}, function(stream) {
 
 ## Contributors
 
+### node-twitter
 Originally authored by  [@technoweenie](http://github.com/technoweenie)
  and maintained by [@jdub](http://github.com/jdub)
 
@@ -120,6 +122,7 @@ Currently maintained by [@desmondmorris](http://github.com/desmondmorris)
 
 ## LICENSE
 
+node-twitter-promise: Copyright (c) 2015 Chitoku
 node-twitter: Copyright (c) 2014 Desmond Morris
 
 Permission is hereby granted, free of charge, to any person obtaining

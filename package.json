@@ -1,5 +1,5 @@
 {
-  "name": "twitter",
+  "name": "twitter-promise",
   "version": "v1.2.5",
   "description": "Twitter API client library for node.js",
   "keywords": [
